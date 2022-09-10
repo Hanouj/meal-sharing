@@ -20,11 +20,74 @@ app.use(express.json());
 app.use(cors());
 
 router.use("/meals", mealsRouter);
+app.get("/my-route", (req, res) => {
+  res.send("Hi friend");
+});
+//future-meals
+app.get("/future-meals", async (req, res) => {
+  try {
+    const [rows] = await knex.raw("SELECT * FROM meal WHERE YEAR(when) = 2022");
+    res.json(rows);
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+//past-meals
+app.get("/past-meals", async (req, res) => {
+  try {
+    const [rows] = await knex.raw("SELECT * FROM meal WHERE YEAR(when) = 2021");
+    res.json(rows);
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+//all-meals
+app.get("/all-meals", async (req, res) => {
+  try {
+    const [rows] = await knex.raw("SELECT * FROM meal ORDER BY id");
+    res.json(rows);
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+//first-meal
+app.get("/first-meals", async (req, res) => {
+  try {
+    const [rows] = await knex.raw("SELECT * FROM meal ORDER BY id limit 1");
+    if (rows.length > 0) {
+      res.json(rows);
+    } else {
+      res.status(404).json({ error: "No meals found" });
+    }
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+//last-meal
+app.get("/last-meals", async (req, res) => {
+  try {
+    const [rows] = await knex.raw(
+      "SELECT * FROM meal ORDER BY id DESC limit 1"
+    );
+    if (rows.length > 0) {
+      res.json(rows);
+    } else {
+      res.status(404).json({ error: "No meals found" });
+    }
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
 
 if (process.env.API_PATH) {
   app.use(process.env.API_PATH, router);
 } else {
-  throw "API_PATH is not set. Remember to set it in your .env file"
+  throw "API_PATH is not set. Remember to set it in your .env file";
 }
 
 // for the frontend. Will first be covered in the react class
