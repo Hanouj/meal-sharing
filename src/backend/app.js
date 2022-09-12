@@ -26,7 +26,7 @@ app.get("/my-route", (req, res) => {
 //future-meals
 app.get("/future-meals", async (req, res) => {
   try {
-    const [rows] = await knex.raw("SELECT * FROM meal WHERE YEAR(when) = 2022");
+    const [rows] = await knex.raw("SELECT * FROM meal WHERE when > now()");
     res.json(rows);
   } catch (e) {
     console.error(e);
@@ -36,7 +36,7 @@ app.get("/future-meals", async (req, res) => {
 //past-meals
 app.get("/past-meals", async (req, res) => {
   try {
-    const [rows] = await knex.raw("SELECT * FROM meal WHERE YEAR(when) = 2021");
+    const [rows] = await knex.raw("SELECT * FROM meal WHERE when < NOW() ");
     res.json(rows);
   } catch (e) {
     console.error(e);
@@ -54,7 +54,7 @@ app.get("/all-meals", async (req, res) => {
   }
 });
 //first-meal
-app.get("/first-meals", async (req, res) => {
+app.get("/first-meal", async (req, res) => {
   try {
     const [rows] = await knex.raw("SELECT * FROM meal ORDER BY id limit 1");
     if (rows.length > 0) {
@@ -68,7 +68,7 @@ app.get("/first-meals", async (req, res) => {
   }
 });
 //last-meal
-app.get("/last-meals", async (req, res) => {
+app.get("/last-meal", async (req, res) => {
   try {
     const [rows] = await knex.raw(
       "SELECT * FROM meal ORDER BY id DESC limit 1"
