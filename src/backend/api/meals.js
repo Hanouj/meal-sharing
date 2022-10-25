@@ -1,5 +1,4 @@
 const express = require("express");
-const { request, response } = require("../app");
 const router = express.Router();
 const knex = require("../database");
 
@@ -7,39 +6,41 @@ const knex = require("../database");
 router.get("/", async (request, response) => {
   let meals = knex("meal");
   if ("maxPrice" in request.query) {
-    if (!"maxPrice") {
-      response.status(403).json("Please enter data");
+    if (!maxPrice) {
+      response.status(400).json({ status: 400, message: "You must add price" });
     } else {
-      meals = meals.where("price", "<=", Number(request.query.maxPrice));
+      meals = meals.whereBetween("price", [0, request.query.maxPrice]);
     }
   }
   // availableReservations
-
-  if ("availableReservation" in request.query) {
-    const reservation = request.query.availableReservation;
-    if (false(reservation) && typeof reservation == "boolean") {
-      response.status("Sorry there are no reservations!");
-    } else if (true(reservation) && typeof reservation == "boolean") {
-      meals = meals
-        .join("reservation", "meal.id", "=", "reservation.meal_id")
-        .select(
-          "meal.id",
-          "title",
-          "max_reservations",
-          knex.raw("(meal.max_reservations-SUM(reservation.number_of_guests)) ")
-        )
-        .where("meal.max_reservations", ">", "reservation.number_of_guests")
-        .groupBy("meal.id")
-        .having(
-          "(meal.max_reservations-SUM(reservation.number_of_guests)) > 0"
-        );
+  const reservation = request.query.availableReservation;
+  if (
+    "availableReservations" in request.query &&
+    typeof reservation == "string"
+  ) {
+    meals = meals
+      .join("reservation", "reservation.meal_id", "=", "meal.id")
+      .groupBy("meal.id");
+    if (reservation === "true") {
+      meals = meals.having(
+        "meal.max_reservations",
+        ">",
+        knex.raw("SUM(reservation.number_of_guests)")
+      );
+    } else {
+      meals = meals.having(
+        "meal.max_reservations",
+        "=",
+        knex.raw("SUM(reservation.number_of_guests)")
+      );
     }
   }
+
   // title
   if ("title" in request.query) {
     const title = request.query.title;
     if (!title) {
-      response.status(403).json("Please enter data");
+      response.status(403).json("Please Add a title");
     } else {
       meals = meals.where("title", "like", `${title}%`);
     }
@@ -48,7 +49,7 @@ router.get("/", async (request, response) => {
   if ("dateAfter" in request.query) {
     const dateAfr = new Date(request.query.dateAfter);
     if (!dateAfr) {
-      res.status(403).json("Please enter Data");
+      res.status(403).json("Please enter the date first");
     } else {
       meals = meals.where("when", ">", dateAfr);
     }
@@ -57,7 +58,7 @@ router.get("/", async (request, response) => {
   if ("dateBefore" in request.query) {
     const dateBfr = new Date(request.query.dateBefore);
     if (!dateBfr) {
-      res.status(403).json("Please enter Data");
+      res.status(403).json("Please enter the date first");
     } else {
       meals = meals.where("when", "<", dateBfr);
     }
@@ -69,6 +70,19 @@ router.get("/", async (request, response) => {
       response.status(403).json("Please enter a limit number");
     } else {
       meals = meals.limit(limit);
+    }
+  }
+  if (
+    "sort_key" in request.query &&
+    ["when", "max_reservations", "price"].includes(request.query.sort_key)
+  ) {
+    if (
+      "sort_dir" in request.query &&
+      ["asc", "desc"].includes(request.query.sort_dir)
+    ) {
+      meals = meals.orderBy(request.query.sort_key, request.query.sort_dir);
+    } else {
+      meals = meals.orderBy(request.query.sort_key);
     }
   }
   try {
