@@ -8,7 +8,7 @@ router.get("/", async (request, response) => {
     const reservations = await knex("reservation").select("*");
     response.json(reservations);
   } catch (error) {
-    throw error;
+    response.status(500).json({ error: "Server error" });
   }
 });
 module.exports = router;
@@ -16,15 +16,16 @@ module.exports = router;
 router.post("/", async (request, response) => {
   try {
     const addReservation = request.body;
+    let today = new Date().toISOString().slice(0, 10);
     const [reservationId] = await knex("reservation").insert({
-      number_of_guests: addReservation.number_of_guests || "Untitled",
+      number_of_guests: addReservation.number_of_guests,
       meal_id: addReservation.description,
-      created_date: addReservation.created_date,
+      created_date: today,
       contact_phonenumber: addReservation.contact_phonenumber,
       contact_name: addReservation.contact_name,
       contact_email: addReservation.contact_email,
     });
-    if (reservationId === 0) {
+    if (!reservationId) {
       response.status(404).json({ message: "No reservation found" });
     } else {
       response
@@ -32,7 +33,7 @@ router.post("/", async (request, response) => {
         .json({ message: "New created reservation", id: reservationId });
     }
   } catch (error) {
-    throw error;
+    response.status(500).json({ error: "Server error" });
   }
 });
 //returns a reservation by id
@@ -47,7 +48,7 @@ router.get("/:id", async (request, response) => {
       response.status(404).send(`This Id in not found`);
     }
   } catch (error) {
-    throw error;
+    response.status(500).json({ error: "Server error" });
   }
 });
 //updates the reservation by id
@@ -62,7 +63,7 @@ router.put("/:id", async (request, response) => {
       });
     response.json(reservationIdUpdate);
   } catch (error) {
-    throw error;
+    response.status(500).json({ error: "Server error" });
   }
 });
 //delete the reservation by id
@@ -73,6 +74,6 @@ router.delete("/:id", async (request, response) => {
       .del();
     response.json(reservationToDelete);
   } catch (error) {
-    throw error;
+    response.status(500).json({ error: "Server error" });
   }
 });
