@@ -8,6 +8,7 @@ router.get("/", async (request, response) => {
   if ("maxPrice" in request.query) {
     if (!maxPrice) {
       response.status(400).json({ status: 400, message: "You must add price" });
+      return;
     } else {
       meals = meals.whereBetween("price", [0, request.query.maxPrice]);
     }
@@ -27,6 +28,7 @@ router.get("/", async (request, response) => {
         ">",
         knex.raw("SUM(reservation.number_of_guests)")
       );
+      return;
     } else {
       meals = meals.having(
         "meal.max_reservations",
@@ -41,6 +43,7 @@ router.get("/", async (request, response) => {
     const title = request.query.title;
     if (!title) {
       response.status(403).json("Please Add a title");
+      return;
     } else {
       meals = meals.where("title", "like", `${title}%`);
     }
@@ -50,6 +53,7 @@ router.get("/", async (request, response) => {
     const dateAfr = new Date(request.query.dateAfter);
     if (!dateAfr) {
       res.status(403).json("Please enter the date first");
+      return;
     } else {
       meals = meals.where("when", ">", dateAfr);
     }
@@ -59,6 +63,7 @@ router.get("/", async (request, response) => {
     const dateBfr = new Date(request.query.dateBefore);
     if (!dateBfr) {
       res.status(403).json("Please enter the date first");
+      return;
     } else {
       meals = meals.where("when", "<", dateBfr);
     }
@@ -68,6 +73,7 @@ router.get("/", async (request, response) => {
     const limit = Number(request.query.limit);
     if (!limit) {
       response.status(403).json("Please enter a limit number");
+      return;
     } else {
       meals = meals.limit(limit);
     }
