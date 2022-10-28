@@ -20,7 +20,9 @@ router.get("/:id", async (request, response) => {
     const reviewById = await knex("review").where({ id: request.params.id });
     reviewById.length !== 0
       ? response.json(reviewById)
-      : response.status(404).send(` There are no review under this id`);
+      : response
+          .status(404)
+          .json({ error: "There are no review under this id" });
   } catch (error) {
     response.status(500).json({ error: "Internal server error" });
   }
@@ -102,3 +104,5 @@ router.delete("/:id", async (request, response) => {
     response.status(500).json({ error: "Internal server error" });
   }
 });
+
+module.exports = router;

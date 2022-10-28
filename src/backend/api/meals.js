@@ -6,8 +6,8 @@ const knex = require("../database");
 router.get("/", async (request, response) => {
   let meals = knex("meal");
   if ("maxPrice" in request.query) {
-    if (!maxPrice) {
-      response.status(400).json({ status: 400, message: "You must add price" });
+    if (!request.query.maxPrice) {
+      response.status(400).json({ error: "You must add price" });
       return;
     } else {
       meals = meals.whereBetween("price", [0, request.query.maxPrice]);
@@ -42,7 +42,7 @@ router.get("/", async (request, response) => {
   if ("title" in request.query) {
     const title = request.query.title;
     if (!title) {
-      response.status(403).json("Please Add a title");
+      response.status(400).json({ error: "Please Add a title" });
       return;
     } else {
       meals = meals.where("title", "like", `${title}%`);
@@ -52,7 +52,7 @@ router.get("/", async (request, response) => {
   if ("dateAfter" in request.query) {
     const dateAfr = new Date(request.query.dateAfter);
     if (!dateAfr) {
-      res.status(403).json("Please enter the date first");
+      res.status(400).json({ error: "Please enter the date after" });
       return;
     } else {
       meals = meals.where("when", ">", dateAfr);
@@ -62,7 +62,7 @@ router.get("/", async (request, response) => {
   if ("dateBefore" in request.query) {
     const dateBfr = new Date(request.query.dateBefore);
     if (!dateBfr) {
-      res.status(403).json("Please enter the date first");
+      res.status(400).json({ error: "Please enter the date before" });
       return;
     } else {
       meals = meals.where("when", "<", dateBfr);
@@ -72,7 +72,7 @@ router.get("/", async (request, response) => {
   if ("limit" in request.query) {
     const limit = Number(request.query.limit);
     if (!limit) {
-      response.status(403).json("Please enter a limit number");
+      response.status(400).json({ error: "Please enter a limit number" });
       return;
     } else {
       meals = meals.limit(limit);
