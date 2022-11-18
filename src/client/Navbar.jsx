@@ -20,7 +20,7 @@ export default function Navbar() {
           <a href="/add-meal">add meal</a>
         </li>
         <li className="active">
-          <a href="/meals/:id">meal</a>
+          <a href="/meals/:id">reservation</a>
         </li>
         <li className="active">
           <a href="/about">about</a>

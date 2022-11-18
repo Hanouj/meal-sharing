@@ -11,7 +11,7 @@ router.get("/", async (request, response) => {
     response.status(500).json({ error: "Server error" });
   }
 });
-module.exports = router;
+
 //add new reservation
 router.post("/", async (request, response) => {
   try {
@@ -77,3 +77,4 @@ router.delete("/:id", async (request, response) => {
     response.status(500).json({ error: "Server error" });
   }
 });
+module.exports = router;

@@ -1,12 +1,13 @@
-import React, {useEffect, useState, useContext} from 'react';
+import React, {useContext} from 'react';
 import { UserContext } from '../LocalContext';
-import AddMeal from './AddMeal';
 import BorderMenu from './BorderMenu';
+import { Link } from 'react-router-dom';
 
-export default function Menu(props) {
+export default function Menu() {
     const {
       meals,
     }=useContext(UserContext)
+    console.log(meals)
   
      return (
       <>
@@ -25,6 +26,9 @@ export default function Menu(props) {
        <div className='menu-price'>
      <li >{meal.title}</li>
      <p>{meal.price}kr</p>
+     <Link to={`/meals/${meal.id}`}>
+     <button>reserve Here</button>
+     </Link>
      </div>
      <p>{meal.description}</p>
   

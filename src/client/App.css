@@ -118,6 +118,7 @@ object-fit: cover;
   display: flex;
   justify-content: center;
   align-items: center;
+  margin:15px;
 }
 button{
   background-color: #bd0303;
@@ -182,4 +183,10 @@ input, textarea{
   border-bottom:1px solid rgb(255, 255, 255);
   margin-top: 10px;
   padding: 10px 5px;
+ }
+ .reservation{
+  display: flex;
+  margin:15px;
+  flex-direction: column;
+  align-items: center;
  }

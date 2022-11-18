@@ -2,11 +2,9 @@ const express = require("express");
 const router = express.Router();
 const knex = require("../database");
 
-nodejs-week3
 // maxPrice
 
 //select all
- main
 router.get("/", async (request, response) => {
   let meals = knex("meal");
   if ("maxPrice" in request.query) {
@@ -96,13 +94,12 @@ router.get("/", async (request, response) => {
     }
   }
   try {
-nodejs-week3
     const mealRecord = await meals;
+    console.log(mealRecord);
     response.json(mealRecord);
 
-    const meals = await knex("meal").select("*");
-    response.json(meals);
-main
+    // const meals = await knex("meal").select("*");
+    // response.json(meals);
   } catch (error) {
     response.status(500).json({ error: "Server error" });
   }
@@ -137,7 +134,7 @@ router.get("/:id", async (request, response) => {
       id: request.params.id,
     });
     if (mealSearchId.length > 0) {
-      response.json(mealSearchId);
+      response.json(mealSearchId[0]);
     } else {
       response.status(404).json({ error: "No meal found" });
     }

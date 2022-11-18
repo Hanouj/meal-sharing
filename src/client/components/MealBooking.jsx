@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useContext } from 'react';
 import { UserContext } from '../LocalContext';
 
 export default function MealBooking({id}) {
@@ -8,7 +8,6 @@ export default function MealBooking({id}) {
     const [guests, setGuests] = useState("");
     const{
         meals,
-        setMeals,
      }=useContext(UserContext)
 
 const maxGuests =meals

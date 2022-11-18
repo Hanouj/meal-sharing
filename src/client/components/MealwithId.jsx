@@ -1,36 +1,43 @@
-import React,{ useEffect, useContext} from "react";
+import React,{ useEffect, useState} from "react";
 import { useParams } from "react-router-dom";
 import MealBooking from "./MealBooking"
-import { UserContext } from '../LocalContext';
-
 
 export default function MealwithId (){
-    let {id} =useParams();
-    const{
-       meals,
-       setMeals,
-    }=useContext(UserContext)
+  const [meal, setMeal] = useState();
+  const [isLoading, setIsLoading] = useState(true);
+
+   let {id} =useParams();
+   const params = useParams();
+console.log(params);
 
     useEffect(() => {
+      setIsLoading(true)
         fetch(`/api/meals/${id}`)
           .then((response) => response.json())
           .then((data) => {
-            setMeals(data);
+            setMeal(data);
+            setIsLoading(false)
+          
           });
+          
       }, []);
 
-
       return(
-        <main>
+
+        <main className="reservation">
             <div>
-             <h2>{meals.title}</h2>
-        <h3>Description: {meals.description}</h3>
-        <h4> Price: {meals.price}</h4>
+            {isLoading ?  <p>Loading...</p>: <>
+            <h2>Meal: {meal.title}</h2>
+        <h3>Description: {meal.description}</h3>
+        <h4> Price: {meal.price}</h4>
+            </>}       
+            
       </div>
       <div>
-        <button>Book Reservation</button>
-      </div>
       <MealBooking id={id}/>
+      </div>
+
         </main>
       )
+    
 }
